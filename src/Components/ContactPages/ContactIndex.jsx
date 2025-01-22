@@ -65,6 +65,29 @@ export class ContactIndex extends Component {
     });
     return { status: "success", msg: "Contact was added successfully" };
   };
+
+  handleToggleFavorites = (contact) => {
+    this.setState((prevState) => {
+      return {
+        contactList: prevState.contactList.map((obj) => {
+          if (obj.id == contact.id) {
+            return { ...obj, isFavorite: !obj.isFavorite };
+          }
+          return obj;
+        }),
+      };
+    });
+  };
+
+  handleDeleteContact = (contactId) => {
+    this.setState((prevState) => {
+      return {
+        contactList: prevState.contactList.filter(
+          (obj) => obj.id !== contactId
+        ),
+      };
+    });
+  };
   render() {
     return (
       <div>
@@ -88,6 +111,8 @@ export class ContactIndex extends Component {
                   contacts={this.state.contactList.filter(
                     (u) => u.isFavorite == true
                   )}
+                  favoriteClick={this.handleToggleFavorites}
+                  deleteClick={this.handleDeleteContact}
                 />
               </div>
             </div>
@@ -97,6 +122,8 @@ export class ContactIndex extends Component {
                   contacts={this.state.contactList.filter(
                     (u) => u.isFavorite == false
                   )}
+                  favoriteClick={this.handleToggleFavorites}
+                  deleteClick={this.handleDeleteContact}
                 />
               </div>
             </div>
