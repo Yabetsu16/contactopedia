@@ -35,6 +35,8 @@ export class ContactIndex extends Component {
           isFavorite: true,
         },
       ],
+      selectedContact: undefined,
+      isUpdating: false,
     };
   }
 
@@ -103,6 +105,66 @@ export class ContactIndex extends Component {
       };
     });
   };
+
+  handleDeleteAllContact = () => {
+    this.setState(() => {
+      return {
+        contactList: [],
+      };
+    });
+  };
+
+  handleUpdateClick = (contact) => {
+    console.log(contact);
+
+    this.setState(() => {
+      return {
+        selectedContact: contact,
+        isUpdating: true,
+      };
+    });
+  };
+
+  handleCancelUpdateContact = (contact) => {
+    console.log(contact);
+
+    this.setState(() => {
+      return {
+        selectedContact: undefined,
+        isUpdating: false,
+      };
+    });
+  };
+
+  handleUpdateContact = (updatedContact) => {
+    console.log(updatedContact);
+    
+    if (updatedContact.name == "") {
+      return { status: "failure", msg: "Please Enter a valid name" };
+    } else if (updatedContact.phone == "") {
+      return { status: "failure", msg: "Please Enter a valid phone number" };
+    }
+
+    this.setState((prevState) => {
+      return {
+        contactList: prevState.contactList.map((obj) => {
+          if (obj.id == updatedContact.id) {
+            return {
+              ...obj,
+              name: updatedContact.name,
+              email: updatedContact.email,
+              phone: updatedContact.phone,
+            };
+          }
+          return obj;
+        }),
+        isUpdating: false,
+        selectedContact: undefined,
+      };
+    });
+
+    return { status: "success", msg: "Contact was updated successfully" };
+  };
   render() {
     return (
       <div>
@@ -115,11 +177,19 @@ export class ContactIndex extends Component {
               />
             </div>
             <div className="col-4 row">
-              <RemoveAllContact />
+              <RemoveAllContact
+                handleDeleteAllContact={this.handleDeleteAllContact}
+              />
             </div>
             <div className="row py-2">
               <div className="col-8 offset-2 row">
-                <AddContact handleAddContact={this.handleAddContact} />
+                <AddContact
+                  isUpdating={this.state.isUpdating}
+                  selectedContact={this.state.selectedContact}
+                  handleAddContact={this.handleAddContact}
+                  handleCancelUpdateContact={this.handleCancelUpdateContact}
+                  handleUpdateContact={this.handleUpdateContact}
+                />
               </div>
             </div>
             <div className="row py-2">
@@ -130,6 +200,7 @@ export class ContactIndex extends Component {
                   )}
                   favoriteClick={this.handleToggleFavorites}
                   deleteClick={this.handleDeleteContact}
+                  updateClick={this.handleUpdateClick}
                 />
               </div>
             </div>
@@ -141,6 +212,7 @@ export class ContactIndex extends Component {
                   )}
                   favoriteClick={this.handleToggleFavorites}
                   deleteClick={this.handleDeleteContact}
+                  updateClick={this.handleUpdateClick}
                 />
               </div>
             </div>
