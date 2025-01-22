@@ -37,6 +37,34 @@ export class ContactIndex extends Component {
       ],
     };
   }
+
+  handleAddContact = (newContact) => {
+    if (newContact.name == "") {
+      return { status: "failure", msg: "Please Enter a valid name" };
+    } else if (newContact.phone == "") {
+      return { status: "failure", msg: "Please Enter a valid phone number" };
+    }
+    const duplicateRecord = this.state.contactList.filter((x) => {
+      if (x.name == newContact.name || x.phone == newContact.phone) {
+        return true;
+      }
+    });
+
+    if (duplicateRecord.length > 0) {
+      return { status: "failure", msg: "Duplicate Record" };
+    }
+    const newFinalContact = {
+      ...newContact,
+      id: this.state.contactList[this.state.contactList.length - 1].id + 1,
+      isFavorite: false,
+    };
+    this.setState((prevState) => {
+      return {
+        contactList: prevState.contactList.concat([newFinalContact]),
+      };
+    });
+    return { status: "success", msg: "Contact was added successfully" };
+  };
   render() {
     return (
       <div>
@@ -50,21 +78,27 @@ export class ContactIndex extends Component {
               <RemoveAllContact />
             </div>
             <div className="row py-2">
-              <AddContact />
+              <div className="col-8 offset-2 row">
+                <AddContact handleAddContact={this.handleAddContact} />
+              </div>
             </div>
             <div className="row py-2">
-              <FavoriteContacts
-                contacts={this.state.contactList.filter(
-                  (u) => u.isFavorite == true
-                )}
-              />
+              <div className="col-8 offset-2 row">
+                <FavoriteContacts
+                  contacts={this.state.contactList.filter(
+                    (u) => u.isFavorite == true
+                  )}
+                />
+              </div>
             </div>
             <div className="row py-2">
-              <GeneralContacts
-                contacts={this.state.contactList.filter(
-                  (u) => u.isFavorite == false
-                )}
-              />
+              <div className="col-8 offset-2 row">
+                <GeneralContacts
+                  contacts={this.state.contactList.filter(
+                    (u) => u.isFavorite == false
+                  )}
+                />
+              </div>
             </div>
           </div>
         </div>
