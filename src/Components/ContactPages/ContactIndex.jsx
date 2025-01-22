@@ -52,18 +52,20 @@ export class ContactIndex extends Component {
 
     if (duplicateRecord.length > 0) {
       return { status: "failure", msg: "Duplicate Record" };
-    }
-    const newFinalContact = {
-      ...newContact,
-      id: this.state.contactList[this.state.contactList.length - 1].id + 1,
-      isFavorite: false,
-    };
-    this.setState((prevState) => {
-      return {
-        contactList: prevState.contactList.concat([newFinalContact]),
+    } else {
+      const newFinalContact = {
+        ...newContact,
+        id: this.state.contactList[this.state.contactList.length - 1].id + 1,
+        isFavorite: false,
       };
-    });
-    return { status: "success", msg: "Contact was added successfully" };
+      this.setState((prevState) => {
+        return {
+          contactList: prevState.contactList.concat([newFinalContact]),
+        };
+      });
+
+      return { status: "success", msg: "Contact was added successfully" };
+    }
   };
 
   handleToggleFavorites = (contact) => {
@@ -88,16 +90,31 @@ export class ContactIndex extends Component {
       };
     });
   };
+
+  handleAddRandomContact = (newContact) => {
+    const newFinalContact = {
+      ...newContact,
+      id: this.state.contactList[this.state.contactList.length - 1].id + 1,
+      isFavorite: false,
+    };
+    this.setState((prevState) => {
+      return {
+        contactList: prevState.contactList.concat([newFinalContact]),
+      };
+    });
+  };
   render() {
     return (
       <div>
         <Header />
         <div className="container" style={{ minHeight: "85vh" }}>
           <div className="row py-3">
-            <div className="col-4 offset-2">
-              <AddRandomContact />
+            <div className="col-4 offset-2 row">
+              <AddRandomContact
+                handleAddRandomContact={this.handleAddRandomContact}
+              />
             </div>
-            <div className="col-4">
+            <div className="col-4 row">
               <RemoveAllContact />
             </div>
             <div className="row py-2">
